@@ -1,0 +1,16 @@
+language: elixir
+services:
+  - redis-server
+before_install:
+  - cp config/dev.secret.dist.exs config/dev.secret.exs
+elixir:
+  - 1.3.4
+  - 1.4
+  - 1.5
+script:
+  # - mix credo --strict
+  # - mix dialyzer
+  - mix test
+otp_release:
+  - 19.2
+  - 20.0
