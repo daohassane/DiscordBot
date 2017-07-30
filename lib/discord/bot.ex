@@ -21,15 +21,6 @@ defmodule Discord.Bot do
   end
 
   @doc """
-  Send an identify frame
-  """
-  def identify(client, api_key) do
-    Logger.debug("Identifying")
-    frame = Frame.identify(api_key)
-    :ok = WebSockex.send_frame(client, {:binary, frame})
-  end
-
-  @doc """
   Invoked on the reception of a frame on the socket.
   """
   def handle_frame({:binary, frame}, state) do
@@ -53,8 +44,13 @@ defmodule Discord.Bot do
   """
   def handle_frame(%{op: 10, d: %{heartbeat_interval: heartbeat_interval}}, state) do
     pid = self()
+    # We send an heartbeat frame after the specified interval
     Process.send_after(self(), :heartbeat, heartbeat_interval)
-    spawn_link fn -> identify(pid, state.api_key) end
+    # We send an identify frame
+    spawn_link fn ->
+      :ok = WebSockex.send_frame(pid, Frame.identify(state.api_key))
+    end
+    # We store the heartbeat interval into the state
     {:ok, Map.put(state, :heartbeat_interval, heartbeat_interval)}
   end
 
@@ -65,6 +61,9 @@ defmodule Discord.Bot do
     {:ok, Map.put(state, :ack, true)}
   end
 
+  @doc """
+  Unhandled frame we just log it
+  """
   def handle_frame(frame, state) do
     Logger.debug("Received frame #{frame.t}::" <> inspect(frame))
     {:ok, state}
@@ -88,11 +87,13 @@ defmodule Discord.Bot do
   """
   def handle_info(:heartbeat, state = %{ack: false}), do: {:close, state}
 
+  @spec handle_disconnect(map, term) :: {:ok, map}
   def handle_disconnect(connection_status_map, state) do
-    IO.inspect(connection_status_map)
+    Logger.debug("Disconned " <> inspect(connection_status_map))
     {:ok, state}
   end
 
+  @spec terminate(String.t, map) :: any
   def terminate(close_reason, state) do
     Logger.warn(close_reason)
   end

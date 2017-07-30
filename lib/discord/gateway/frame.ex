@@ -1,22 +1,22 @@
 defmodule Discord.Gateway.Frame do
-  @docmodule """
+  @moduledoc ~S"""
   Generate frame for API Gateway
-  """
 
-  @opcodes %{
-    dispatch: 0,
-    heartbeat: 1,
-    identify: 2,
-    status_update: 3,
-    voice_state_update: 4,
-    voice_ping: 5,
-    resumt: 6,
-    reconnect: 7,
-    request_guild_members: 8,
-    invalid_session: 9,
-    hello: 10,
-    heartbeat_ack: 11
-  }
+  ## Opcodes
+
+  dispatch: 0,
+  heartbeat: 1
+  identify: 2
+  status_update: 3
+  voice_state_update: 4
+  voice_ping: 5
+  resumt: 6
+  reconnect: 7
+  request_guild_members: 8
+  invalid_session: 9
+  hello: 10
+  heartbeat_ack: 11
+  """
 
   @type frame :: {:binary, :erlang.ext_binary}
 

@@ -11,23 +11,20 @@ defmodule Grafibot.Mixfile do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      applications: [:poison, :httpoison, :websockex], # for elixir 1.3 compatibility
       extra_applications: [:logger],
       mod: {Grafibot.Application, []}
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:websockex, "~> 0.4.0"},
       {:poison, "~> 3.1"},
       {:httpoison, "~> 0.12.0"},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:websockex, "~> 0.4.0"}
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
     ]
   end
 end
